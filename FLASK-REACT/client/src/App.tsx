@@ -1,11 +1,11 @@
 // Import necessary React hooks and components
-import { useState, useEffect } from 'react';
+import { useState, useEffect } from "react";
 
 // Define the main App component
 function App() {
   // Initialize a state variable called 'data' using the 'useState' hook,
   // with an initial value of an array containing an empty object.
-  const [data, setData] = useState([{}]);
+  const [data, setData] = useState<{members?:string[]}>({});
 
   // Use the 'useEffect' hook to perform side effects in the component.
   // In this case, it fetches data from the '/members' endpoint when the
@@ -24,13 +24,11 @@ function App() {
   return (
     <div>
       {/* Conditional rendering based on the presence of 'data.members' */}
-      {typeof data.members === 'undefined' ? (
+      {typeof data.members === "undefined" ? (
         <p>loading..</p> // Display a loading message when data is being fetched
       ) : (
         // Map over the 'data.members' array and display each member as a paragraph
-        data.members.map((member, i) => (
-          <p key={i}>{member}</p>
-        ))
+        data.members.map((member, i) => <p key={i}>{member}</p>)
       )}
     </div>
   );
@@ -38,4 +36,3 @@ function App() {
 
 // Export the App component as the default export of this module
 export default App;
-
