@@ -4,12 +4,10 @@ import {
 import { baseRoute } from "../../routes";
 import { Page1 } from "./pages";
 
-const pages = [Page1] as const
-
-const onboardingRoutes = pages.map((p, i) => new Route({
-  path: `app/onboarding/${i+1}`,
+const onboardingRoute = new Route({
+  path: `app/onboarding`,
   getParentRoute: () => baseRoute,
-  component: p,
-}));
+  component: Page1,
+});
 
-export default onboardingRoutes;
+export default onboardingRoute;
