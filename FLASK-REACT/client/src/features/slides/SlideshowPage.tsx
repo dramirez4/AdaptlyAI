@@ -1,8 +1,11 @@
 import { Carousel } from '@mantine/carousel';
-import { AppShell, Navbar, Header, Title, List,Text } from '@mantine/core';
+import { AppShell, Navbar, Header, Title, List,Text, AspectRatio, Flex, Button } from '@mantine/core';
+import Webcam from "react-webcam";
+import { useRef } from "react";
 
 function SlideshowPage() {
-  return (
+    const webcamRef = useRef<Webcam | null>(null);
+    return (
     <AppShell
       padding="md"
       sx={{minHeight: '100vh'}}
@@ -31,6 +34,18 @@ function SlideshowPage() {
       <Carousel.Slide>3</Carousel.Slide>
       {/* ...other slides */}
     </Carousel>
+
+<Flex align={'center'} gap={'sm'}>
+    <AspectRatio
+        ratio={1/1}
+        sx={{ backgroundColor: "gray", width:'6rem', borderRadius:'999px', overflow:'hidden' }}
+      >
+        <Webcam ref={webcamRef} />
+      </AspectRatio>
+
+      <Button>I Understand</Button>
+      <Button>I'm Confused</Button>
+      </Flex>
     </AppShell>
   );
 }
