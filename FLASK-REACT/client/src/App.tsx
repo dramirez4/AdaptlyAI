@@ -5,7 +5,7 @@ import { useState, useEffect } from "react";
 function App() {
   // Initialize a state variable called 'data' using the 'useState' hook,
   // with an initial value of an array containing an empty object.
-  const [data, setData] = useState<{members?:string[]}>({});
+  const [data, setData] = useState<{ members?: string[] }>({});
 
   // Use the 'useEffect' hook to perform side effects in the component.
   // In this case, it fetches data from the '/members' endpoint when the
