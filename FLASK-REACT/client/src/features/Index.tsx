@@ -2,7 +2,7 @@
 import { useState, useEffect } from "react";
 
 // Define the main App component
-function App() {
+function TestPage() {
   // Initialize a state variable called 'data' using the 'useState' hook,
   // with an initial value of an array containing an empty object.
   const [data, setData] = useState<{ members?: string[] }>({});
@@ -35,4 +35,4 @@ function App() {
 }
 
 // Export the App component as the default export of this module
-export default App;
+export default TestPage;
