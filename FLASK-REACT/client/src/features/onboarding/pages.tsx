@@ -18,7 +18,7 @@ export function Page1() {
         ratio={16 / 9}
         sx={{ backgroundColor: "gray", width: "100%" }}
       >
-        {<Webcam ref={webcamRef} />}
+        {checked && <Webcam ref={webcamRef} />}
       </AspectRatio>
       <Switch
         checked={checked}
