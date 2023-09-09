@@ -1,5 +1,5 @@
 // Import necessary React hooks and components
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 
 // Define the main App component
 function App() {
@@ -11,7 +11,7 @@ function App() {
   // In this case, it fetches data from the '/members' endpoint when the
   // component mounts (empty dependency array).
   useEffect(() => {
-    fetch("/members") // Send a GET request to the '/members' endpoint
+    fetch(import.meta.env.VITE_PUBLIC_API_URL + "/members") // Send a GET request to the '/members' endpoint
       .then((res) => res.json()) // Parse the response as JSON
       .then((data) => {
         // Update the 'data' state variable with the fetched data
