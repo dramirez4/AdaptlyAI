@@ -1,8 +1,10 @@
 # Import the Flask class from the Flask library
 from flask import Flask 
+from flask_cors import CORS
 
 # Create an instance of the Flask class and name it 'app'
 app = Flask(__name__)
+CORS(app)
 
 # Define a route for the '/members' endpoint
 @app.route("/members")
