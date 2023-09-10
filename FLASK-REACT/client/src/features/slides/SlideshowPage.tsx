@@ -9,11 +9,10 @@ import {
   AspectRatio,
   Flex,
   Button,
-  Stack,
 } from "@mantine/core";
 import Webcam from "react-webcam";
 import { useCallback, useRef, useState } from "react";
-import showdown from 'showdown'
+import showdown from "showdown";
 
 function SlideshowPage() {
   const webcamRef = useRef<Webcam | null>(null);
@@ -27,15 +26,15 @@ function SlideshowPage() {
   );
 
   const [currentSlide, setCurrentSlide] = useState(0);
-  const converter = new showdown.Converter()
+  const converter = new showdown.Converter();
   const slides = [
-    {title: "What is a set?", content: "- __TBD__"},
-    {title: "What is a power set?", content: "- __TBD__"},
-    {title: "What is a relation?", content: "- __TBD__"},
-    {title: "What is a function?", content: "- __TBD__"},
-    {title: "What is a bijection?", content: "- __TBD__"},
-    {title: "What is a graph?", content: "- __TBD__"},
-    {title: "What is a tree?", content: "- __TBD__"},
+    { title: "What is a set?", content: "- __TBD__" },
+    { title: "What is a power set?", content: "- __TBD__" },
+    { title: "What is a relation?", content: "- __TBD__" },
+    { title: "What is a function?", content: "- __TBD__" },
+    { title: "What is a bijection?", content: "- __TBD__" },
+    { title: "What is a graph?", content: "- __TBD__" },
+    { title: "What is a tree?", content: "- __TBD__" },
   ];
 
   return (
@@ -74,38 +73,44 @@ function SlideshowPage() {
     >
       <Text>Back to Query Page</Text>
       <Title order={1}>Discrete Math</Title>
-      
-    <AspectRatio ratio={16 / 9} px="4rem">
+
+      <AspectRatio ratio={16 / 9} px="4rem">
         <Carousel
-        getEmblaApi={setEmbla}
-        withIndicators
-        onSlideChange={(idx) => setCurrentSlide(idx)}
+          getEmblaApi={setEmbla}
+          withIndicators
+          onSlideChange={(idx) => setCurrentSlide(idx)}
         >
-        {slides.map((text, index) => (
-            <Carousel.Slide sx={(theme) => ({
-                
+          {slides.map((text, index) => (
+            <Carousel.Slide
+              sx={(theme) => ({
                 backgroundColor:
-                theme.colorScheme === "dark"
-                ? 'black'
-                : 'white',
-                display: 'flex',
-                flexDirection: 'column',
-                alignItems: 'start'
-              })} key={index}>
-                <div style={{display:'contents'}} dangerouslySetInnerHTML={{__html:converter.makeHtml(`# ${text.title}\n\n${text.content}`)}}>
-                </div>
-                </Carousel.Slide>
-        ))}
+                  theme.colorScheme === "dark" ? "black" : "white",
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "start",
+              })}
+              key={index}
+            >
+              <div
+                style={{ display: "contents" }}
+                dangerouslySetInnerHTML={{
+                  __html: converter.makeHtml(
+                    `# ${text.title}\n\n${text.content}`,
+                  ),
+                }}
+              ></div>
+            </Carousel.Slide>
+          ))}
         </Carousel>
-    </AspectRatio>
-      
-          <Text sx={{textAlign: 'center'}}>
-          {currentSlide + 1} / {slides.length}
-        </Text>
+      </AspectRatio>
+
+      <Text sx={{ textAlign: "center" }}>
+        {currentSlide + 1} / {slides.length}
+      </Text>
 
       <Flex
         align={"center"}
-        sx={{ width: "100%", justifyContent: "end",  }}
+        sx={{ width: "100%", justifyContent: "end" }}
         gap={"sm"}
       >
         <Button>I Understand</Button>
