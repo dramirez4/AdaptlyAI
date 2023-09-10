@@ -1,18 +1,11 @@
 # AdaptlyAI
 
-<h1>Start</h1>
-Create Virtual Environment: python3 -m venv venv
-Activate Virtual Environment: source venv/bin/activate 
-Download Flask: pip3 install Flask
+## Backend
+Create Virtual Environment: `python3 -m venv venv`
+Activate Virtual Environment: `source venv/bin/activate`
+Download dependencies: `pip3 install -r requirements.txt`
+Run backend: `python3 app.py`
 
-Run front-end: npm start 
-Run Back-end: python3 server.py  **MAKE SURE TO HAVE FLASK INSTALLED*
-
-
-packages to install for cv:
-- pip install tensorflow
-- pip insall keras
-- pip install numpy
-- pip install opencv-python
-
-
+## Frontend
+Install dependencies: `npm install`
+Run frontend: `npm start`
