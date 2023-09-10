@@ -11,8 +11,9 @@ import {
   Button,
 } from "@mantine/core";
 import Webcam from "react-webcam";
-import { useCallback, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import showdown from "showdown";
+import { Link } from "@tanstack/react-router";
 
 function SlideshowPage() {
   const webcamRef = useRef<Webcam | null>(null);
@@ -27,16 +28,52 @@ function SlideshowPage() {
 
   const [currentSlide, setCurrentSlide] = useState(0);
   const converter = new showdown.Converter();
-  const slides = [
-    { title: "What is a set?", content: "- __TBD__" },
-    { title: "What is a power set?", content: "- __TBD__" },
-    { title: "What is a relation?", content: "- __TBD__" },
-    { title: "What is a function?", content: "- __TBD__" },
-    { title: "What is a bijection?", content: "- __TBD__" },
-    { title: "What is a graph?", content: "- __TBD__" },
-    { title: "What is a tree?", content: "- __TBD__" },
-  ];
+  const [slides, setSlides] = useState<{title: string, content?: string}[]>([]);
+  // TODO
+  const student_info = ""
+  const query = localStorage.getItem("query")
+  useEffect(()=>{
+    fetch(import.meta.env.VITE_PUBLIC_API_URL + "/new-deck", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        query,
+        student_info
+      }),
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        console.log({data})
+        setSlides(data.map((slide) => ({title: slide})));
+      });
+  }, [])
 
+  useEffect(() => {
+    if (!slides[currentSlide]?.content) {
+      fetch(import.meta.env.VITE_PUBLIC_API_URL + "/gen-slide", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          query: localStorage.getItem("query"),
+          slide_title: slides[currentSlide]?.title,
+          slide_titles: slides.map((slide) => slide?.title),
+          student_info
+        }),
+      })
+        .then((res) => res.json())
+        .then((data) => {
+          console.log({data})
+          setSlides((slides) => {
+            slides[currentSlide].content = data;
+            return [...slides];
+          });
+        });
+    }
+  }, [currentSlide])
   return (
     <AppShell
       padding="md"
@@ -51,7 +88,7 @@ function SlideshowPage() {
                 key={index}
                 onClick={() => switchSlide(index)}
               >
-                {slide.title}
+                {slide?.title}
               </List.Item>
             ))}
           </List>
@@ -71,8 +108,8 @@ function SlideshowPage() {
         },
       })}
     >
-      <Text>Back to Query Page</Text>
-      <Title order={1}>Discrete Math</Title>
+      <Link to="/app/query">Back to Query Page</Link>
+      <Title order={1}>"{query}"</Title>
 
       <AspectRatio ratio={16 / 9} px="4rem">
         <Carousel
@@ -95,7 +132,7 @@ function SlideshowPage() {
                 style={{ display: "contents" }}
                 dangerouslySetInnerHTML={{
                   __html: converter.makeHtml(
-                    `# ${text.title}\n\n${text.content}`,
+                    `# ${text?.title}\n\n${text?.content ? text.content : 'Loading...'}`,
                   ),
                 }}
               ></div>
@@ -113,7 +150,6 @@ function SlideshowPage() {
         sx={{ width: "100%", justifyContent: "end" }}
         gap={"sm"}
       >
-        <Button>I Understand</Button>
         <Button>I'm Confused</Button>
         <AspectRatio
           ratio={1 / 1}

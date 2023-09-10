@@ -151,7 +151,7 @@ def new_deck():
     return jsonify(gpt4_api.make_new_deck(data['student_info'], data['query']))
 
 
-@app.route('/gen-slide', methods=['GET'])
+@app.route('/gen-slide', methods=['POST'])
 def new_slide():
     data = request.get_json()
     return jsonify(gpt4_api.make_new_slide(data['student_info'], data['query'], data['slide_title'], data['slide_titles']))

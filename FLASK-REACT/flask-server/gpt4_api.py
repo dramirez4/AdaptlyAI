@@ -10,7 +10,7 @@ def call_gpt4_to_extract_info(transcript):
 
     def make_api_call(messages):
         data = {
-            "model": "gpt-4",   # Specify the model, adjust if necessary
+            "model": "gpt-3.5-turbo",   # Specify the model, adjust if necessary
             "messages": messages
         }
         response = requests.post(ENDPOINT, headers=headers, json=data)
@@ -57,13 +57,13 @@ def PROMPT_BASE_TEMPLATE(student_info: str):
     return f'You are an expert educator. Help your student learn new materials by creating engaging and accessible slideshows that cater to their learning style and background. Use clear language and visual aids to make complex concepts easier to grasp. Use analogies and other learning devices that best fit their needs based on the following information about the student: """{student_info}"""'
 
 def NEW_DECK_PROMPT_TEMPLATE(query: str):
-    return f'I will be learning about """{query}""". Return a newline-delimited-list of slide titles that you would include in a slideshow used to teach me about """{query}""". Do not generate the content associated with the slides until asked.'
+    return f'I will be learning about """{query}""". Return a newline-delimited-list of slide titles that you would include in a slideshow used to teach me about """{query}""". Do not generate the content associated with the slides until asked. Do not include any text other than the requested content. '
 
 def CONFUSED_PROMPT_TEMPLATE(confused_slide_title: str):
     return f'I was confused by this slide: """{confused_slide_title}""". Return an amended new-line-delimited list of slide titles, and include at least 1, but no more than 3, new slides that you would add to the slide deck, breaking down the given slide\'s topic into simpler parts until it\'s at just the right level for me to gain an understanding and help me resolve my doubts.'
 
 def GEN_SLIDE_PROMPT_TEMPLATE(query: str, slide_title: str):
-    return f'"I\'m learning about """{query}""", currently on the slide """{slide_title}""". Create the content of this slide. Utilize Markdown for rich text formatting. Do not generate any images or image URLs. Do not be overly verbose. Do not unnecessarily repeat content that will be covered on other slides within the deck. Be sure to keep previously given information about me in mind.'
+    return f'"I\'m learning about """{query}""", currently on the slide """{slide_title}""". Create the content of this slide. Utilize Markdown for rich text formatting. Do not generate any images or image URLs. Do not be overly verbose. Do not include any text other than the requested content. Do not unnecessarily repeat content that will be covered on other slides within the deck. Be sure to keep previously given information about me in mind.'
 
 def make_new_deck_prompt(student_info: str, query: str):
     return [{"role": "system", "content": PROMPT_BASE_TEMPLATE(student_info)},
@@ -71,7 +71,7 @@ def make_new_deck_prompt(student_info: str, query: str):
 
 def make_new_deck(student_info: str, query: str):
     response = openai.ChatCompletion.create(
-        model="gpt-4",
+        model="gpt-3.5-turbo",
         messages=make_new_deck_prompt(student_info, query)
         
     )
@@ -91,7 +91,7 @@ def make_new_slide_prompt(student_info: str, query: str, slide_title: str, slide
 
 def make_new_slide(student_info: str, query: str, slide_title: str, slide_titles: list[str]):
     response = openai.ChatCompletion.create(
-        model="gpt-4",
+        model="gpt-3.5-turbo",
         messages=make_new_slide_prompt(student_info, query, slide_title, slide_titles)
         
     )
@@ -100,7 +100,7 @@ def make_new_slide(student_info: str, query: str, slide_title: str, slide_titles
 
 def make_confused_deck(student_info: str, query: str, confused_slide_title: str, slide_titles: list[str]):
     response = openai.ChatCompletion.create(
-        model="gpt-4",
+        model="gpt-3.5-turbo",
         messages=[
             *make_new_deck_prompt(student_info, query),
             {"role": "assistant", "content": "\n".join(slide_titles)},
