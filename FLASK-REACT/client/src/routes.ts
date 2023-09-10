@@ -1,4 +1,4 @@
-import TestPage from "./features/Index";
+import TestPage from "./features/TestPage";
 import QueryPage from "./features/query/QueryPage";
 import SlideshowPage from "./features/slides/SlideshowPage";
 import { Route, RootRoute } from "@tanstack/react-router";
@@ -26,4 +26,9 @@ export const slidesRoute = new Route({
 });
 
 // Create the route tree using your routes
-export const routeTree = baseRoute.addChildren([indexRoute, onboardingRoute, queryRoute, slidesRoute]);
+export const routeTree = baseRoute.addChildren([
+  indexRoute,
+  onboardingRoute,
+  queryRoute,
+  slidesRoute,
+]);

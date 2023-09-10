@@ -1,8 +1,6 @@
-import {
-  Route,
-} from "@tanstack/react-router";
+import { Route } from "@tanstack/react-router";
 import { baseRoute } from "../../routes";
-import { Page1 } from "./pages";
+import { Page1 } from "./OnboardingPage";
 
 const onboardingRoute = new Route({
   path: `app/onboarding`,

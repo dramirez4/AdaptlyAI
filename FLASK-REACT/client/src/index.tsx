@@ -3,6 +3,7 @@ import ReactDOM from "react-dom/client";
 import { MantineProvider } from "@mantine/core";
 import { RouterProvider, Router } from "@tanstack/react-router";
 import { routeTree } from "./routes";
+import TanStackRouterDevtools from "./components/TanStackRouterDevtools";
 
 // Create the router using your route tree
 const router = new Router({ routeTree });
@@ -13,18 +14,6 @@ declare module "@tanstack/react-router" {
     router: typeof router;
   }
 }
-
-const TanStackRouterDevtools =
-  import.meta.env.NODE_ENV === "production"
-    ? () => null // Render nothing in production
-    : React.lazy(() =>
-        // Lazy load in development
-        import("@tanstack/router-devtools").then((res) => ({
-          default: res.TanStackRouterDevtools,
-          // For Embedded Mode
-          // default: res.TanStackRouterDevtoolsPanel
-        })),
-      );
 
 const rootElement = document.getElementById("root");
 if (rootElement && !rootElement.innerHTML) {
