@@ -9,3 +9,10 @@ Run front-end: npm start
 Run Back-end: python3 server.py  **MAKE SURE TO HAVE FLASK INSTALLED*
 
 
+packages to install for cv:
+- pip install tensorflow
+- pip insall keras
+- pip install numpy
+- pip install opencv-python
+
+
