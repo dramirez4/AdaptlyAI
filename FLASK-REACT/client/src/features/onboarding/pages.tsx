@@ -57,11 +57,11 @@ export function Page1() {
     <div>
       <h1>Welcome to AdaptlyAI</h1>
       <p>Let's get started.</p>
-      <div style={{ backgroundColor: "gray", width: "100%" }}>
+      <div>
         {checked && <Webcam ref={webcamRef} />}
       </div>
       <label>
-        Use Camera
+        Allow Camera
         <input
           type="checkbox"
           checked={checked}
