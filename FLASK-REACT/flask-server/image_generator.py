@@ -14,19 +14,27 @@ def generate_image():
     # Define a text prompt describing the image you want
     prompt = "Generate an image of a blue cat with wings sitting on a cloud."
 
-    # Make an API call to generate the image
-    response = openai.Image.create(
-        model="image-alpha-001",  # Choose an appropriate DALL·E model
-        prompt=prompt,
-        n=1,  # Number of images to generate (you can adjust this)
-        size="256x256"  # Specify the image size (you can adjust this)
-    )
+    try:
+        # Make an API call to generate the image
+        response = openai.Image.create(
+            model="image-alpha-001",  # Choose an appropriate DALL·E model
+            prompt=prompt,
+            n=1,  # Number of images to generate (you can adjust this)
+            size="256x256"  # Specify the image size (you can adjust this)
+        )
 
-    # Get the URL of the generated image
-    image_url = response.data[0]["url"]
+        # Check for errors in the response
+        if 'data' in response and response['data']:
+            # Get the URL of the generated image
+            image_url = response['data'][0]["url"]
+            return jsonify({'imageURL': image_url})
+        else:
+            return jsonify({'error': 'Failed to generate image'})
 
-    return jsonify({'imageURL': image_url})
+    except Exception as e:
+        return jsonify({'error': str(e)})
 
 if __name__ == '__main__':
     app.run(debug=True)
+
 
