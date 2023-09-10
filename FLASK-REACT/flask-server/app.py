@@ -5,8 +5,8 @@ from flask import Flask, request, jsonify
 from google.cloud import speech_v1 as speech
 from flask_pymongo import PyMongo
 from pydub import AudioSegment
-# This imports the config we set up for Google Cloud and MongoDB.
-import config
+import config  # This imports the config we set up for Google Cloud and MongoDB.
+from gpt4_api import call_gpt4_to_extract_info
 
 app = Flask(__name__)
 
@@ -84,13 +84,22 @@ def process_audio():
     processed_audio_path = process_audio_file(audio_path)
 
     transcript = speech_to_text(processed_audio_path)
-    # Remove the original temporary file after processing
-    os.remove(audio_path)
-    # Remove the processed temporary file after processing
-    os.remove(processed_audio_path)
-
-    return jsonify({'transcript': transcript})
-
-
+    
+    # Extract info from the transcript using GPT-4
+    extracted_info = call_gpt4_to_extract_info(transcript)
+    
+    # Save to MongoDB
+    from models import User
+    user_id = User.create_user(extracted_info)
+    
+    os.remove(audio_path)  # Remove the original temporary file after processing
+    os.remove(processed_audio_path)  # Remove the processed temporary file after processing
+    
+    return jsonify({
+        'transcript': transcript,
+        'extracted_info': extracted_info,
+        'user_id': str(user_id.inserted_id)
+    })
+    
 if __name__ == "__main__":
     app.run(debug=True)
