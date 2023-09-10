@@ -9,7 +9,6 @@ from pydub import AudioSegment
 import config
 
 app = Flask(__name__)
-<< << << < HEAD
 
 # Load your pre-trained emotion classification model
 # Update with the correct path
@@ -19,8 +18,7 @@ emotion_labels = ['Angry', 'Disgust', 'Fear',
                   'Happy', 'Neutral', 'Sad', 'Surprise']
 
 # Enable CORS for your app
-== == == =
->>>>>> > 06f1e05fcef94bed380096e60091f17dd8740f98
+
 CORS(app)
 
 app.register_blueprint(views_bp)
