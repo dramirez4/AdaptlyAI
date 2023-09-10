@@ -142,6 +142,7 @@ jupyterlab @ file:///opt/conda/conda-bld/jupyterlab_1647445413472/work
 jupyterlab-pygments @ file:///tmp/build/80754af9/jupyterlab_pygments_1601490720602/work
 jupyterlab-server @ file:///opt/conda/conda-bld/jupyterlab_server_1644500396812/work
 jupyterlab-widgets @ file:///private/var/folders/sy/f16zz6x50xz3113nwtb9bvq00000gp/T/abs_9btffb27id/croot/jupyterlab_widgets_1679055288818/work
+keras==2.13.1
 keyring @ file:///private/var/folders/sy/f16zz6x50xz3113nwtb9bvq00000gp/T/abs_2ds0bchnl2/croot/keyring_1678999223818/work
 kiwisolver @ file:///Users/ec2-user/ci_py311/kiwisolver_1678322457192/work
 lazy-object-proxy @ file:///Users/ec2-user/ci_py311/lazy-object-proxy_1678322504286/work
