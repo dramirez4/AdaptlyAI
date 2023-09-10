@@ -2,6 +2,7 @@ import React, { useCallback, useEffect, useRef, useState } from "react";
 import axios from "axios";
 import Webcam from "react-webcam";
 
+
 export function Page1() {
   const [checked, setChecked] = useState(true);
   const [emotion, setEmotion] = useState("");
@@ -54,11 +55,11 @@ export function Page1() {
   }, [checked, detectEmotion]);
 
   return (
-    <div>
+    <div className="page-container">
       <h1>Welcome to AdaptlyAI</h1>
       <p>Let's get started.</p>
-      <div style={{ backgroundColor: "gray", width: "100%" }}>
-        {checked && <Webcam ref={webcamRef} />}
+      <div className={`camera-container ${checked ? "active" : ""}`}>
+        {checked && <Webcam ref={webcamRef} className="webcam" />}
       </div>
       <label>
         Use Camera
@@ -74,4 +75,7 @@ export function Page1() {
     </div>
   );
 }
+
+
+
 

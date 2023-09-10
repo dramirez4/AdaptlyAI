@@ -1,3 +1,4 @@
+from views import bp as views_bp
 import os
 from flask_cors import CORS
 from flask import Flask, request, jsonify
@@ -8,31 +9,41 @@ import config  # This imports the config we set up for Google Cloud and MongoDB.
 from gpt4_api import call_gpt4_to_extract_info
 
 app = Flask(__name__)
+
+# Load your pre-trained emotion classification model
+# Update with the correct path
+model_path = '/Users/davidramirez/Desktop/AdaptlyAI/AdaptlyAI/model.h5'
+classifier = load_model(model_path)
+emotion_labels = ['Angry', 'Disgust', 'Fear',
+                  'Happy', 'Neutral', 'Sad', 'Surprise']
+
+# Enable CORS for your app
 CORS(app)
 
-from views import bp as views_bp
 app.register_blueprint(views_bp)
 
 # MongoDB Configuration
 app.config["MONGO_URI"] = config.MONGO_URI
 mongo = PyMongo(app)
 
+
 def process_audio_file(file_path):
     """Process audio file to ensure it's in mono and 16kHz sample rate."""
     audio = AudioSegment.from_wav(file_path)
-    
+
     # Convert stereo to mono
     if audio.channels > 1:
         audio = audio.set_channels(1)
-    
+
     # Set sample rate to 16kHz
     audio = audio.set_frame_rate(16000)
-    
+
     # Save processed audio
     processed_path = "processed_" + file_path.split("/")[-1]
     audio.export(processed_path, format="wav")
-    
+
     return processed_path
+
 
 def speech_to_text(audio_path):
     client = speech.SpeechClient()
@@ -51,6 +62,7 @@ def speech_to_text(audio_path):
     for result in response.results:
         transcript = result.alternatives[0].transcript
         return transcript
+
 
 @app.route('/speech_to_text', methods=['POST'])
 def process_audio():
