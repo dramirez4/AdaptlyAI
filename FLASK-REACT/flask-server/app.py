@@ -5,6 +5,10 @@ from flask import Flask, request, jsonify
 from keras.models import load_model
 from keras.preprocessing.image import img_to_array
 from flask_cors import CORS
+from flask import Flask, request, jsonify
+from google.cloud import speech_v1 as speech
+from flask_pymongo import PyMongo
+import config  # This imports the config we set up for Google Cloud and MongoDB.
 
 app = Flask(__name__)
 
@@ -66,6 +70,37 @@ def detect_emotion():
 
     except Exception as e:
         return jsonify({"error": str(e)})
+
+
+# MongoDB Configuration
+app.config["MONGO_URI"] = config.MONGO_URI
+mongo = PyMongo(app)
+
+def speech_to_text(audio_path):
+    client = speech.SpeechClient()
+
+    with open(audio_path, 'rb') as f:
+        audio_data = f.read()
+
+    audio = speech.RecognitionAudio(content=audio_data)
+    config = speech.RecognitionConfig(
+        encoding=speech.RecognitionConfig.AudioEncoding.LINEAR16,
+        sample_rate_hertz=44100,
+        language_code="en-US",
+    )
+
+    response = client.recognize(config=config, audio=audio)
+
+    for result in response.results:
+        transcript = result.alternatives[0].transcript
+        return transcript
+
+@app.route('/speech_to_text', methods=['POST'])
+def process_audio():
+    # This is where you'll receive the audio file from the frontend.
+    # For now, let's just use a test file path.
+    transcript = speech_to_text("path/to/audio/file")
+    return jsonify({'transcript': transcript})
 
 if __name__ == "__main__":
     app.run(debug=True)
