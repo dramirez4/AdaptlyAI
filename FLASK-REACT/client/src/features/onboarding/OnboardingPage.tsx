@@ -52,26 +52,6 @@ export function Page1() {
   }, [checked, detectEmotion]);
 
   return (
-<<<<<<< HEAD:FLASK-REACT/client/src/features/onboarding/pages.tsx
-    <div>
-      <h1>Welcome to AdaptlyAI</h1>
-      <p>Let's get started.</p>
-      <div>
-        {checked && <Webcam ref={webcamRef} />}
-      </div>
-      <label>
-        Allow Camera
-        <input
-          type="checkbox"
-          checked={checked}
-          onChange={(event) => setChecked(event.target.checked)}
-        />
-      </label>
-      <div>
-        <p>Detected Emotion: {emotion}</p>
-      </div>
-    </div>
-=======
     <Stack align="center">
       <Title order={1}>Welcome to AdaptlyAI</Title>
       <Text>Let's get started.</Text>
@@ -97,6 +77,5 @@ export function Page1() {
       <Text>Detected Emotion: {emotion}</Text>
       
     </Stack>
->>>>>>> 27cc33add5382825c15b6844338c03845dce6ffa:FLASK-REACT/client/src/features/onboarding/OnboardingPage.tsx
   );
 }
