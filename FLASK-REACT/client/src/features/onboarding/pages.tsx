@@ -1,37 +1,77 @@
-import { Text, AspectRatio, Switch, Title, Stack, Button } from "@mantine/core";
+import React, { useCallback, useEffect, useRef, useState } from "react";
+import axios from "axios";
 import Webcam from "react-webcam";
-import { useCallback, useRef, useState } from "react";
 
 export function Page1() {
   const [checked, setChecked] = useState(true);
+  const [emotion, setEmotion] = useState("");
   const webcamRef = useRef<Webcam | null>(null);
+
   const capture = useCallback(() => {
     if (webcamRef.current) {
       return webcamRef.current.getScreenshot();
     }
+    return null;
   }, [webcamRef]);
+
+  const detectEmotion = async () => {
+    try {
+      const screenshot = capture();
+      if (screenshot) {
+        const formData = new FormData();
+        const blob = await fetch(screenshot).then((r) => r.blob());
+        formData.append("image", blob);
+
+        const response = await axios.post(
+          "http://127.0.0.1:5000/detect_emotion",
+          formData
+        );
+
+        const detectedEmotion = response.data.emotion;
+        setEmotion(detectedEmotion);
+      }
+    } catch (error) {
+      console.error("Error:", error.message);
+      setEmotion("Error: Emotion detection failed");
+    }
+  };
+
+  useEffect(() => {
+    let intervalId: NodeJS.Timeout;
+
+    if (checked) {
+      // Start capturing and detecting emotion every 0.5 seconds
+      intervalId = setInterval(detectEmotion, 500);
+    } else {
+      // Clear the interval if not using the camera
+      clearInterval(intervalId);
+    }
+
+    return () => {
+      // Cleanup the interval when the component unmounts
+      clearInterval(intervalId);
+    };
+  }, [checked, detectEmotion]);
+
   return (
-    <Stack align="center">
-      <Title order={1}>Welcome to AdaptlyAI</Title>
-      <Text>Let's get started.</Text>
-      <AspectRatio
-        ratio={16 / 9}
-        sx={{ backgroundColor: "gray", width: "100%" }}
-      >
+    <div>
+      <h1>Welcome to AdaptlyAI</h1>
+      <p>Let's get started.</p>
+      <div style={{ backgroundColor: "gray", width: "100%" }}>
         {checked && <Webcam ref={webcamRef} />}
-      </AspectRatio>
-      <Switch
-        checked={checked}
-        onChange={(event) => setChecked(event.currentTarget.checked)}
-        label="Use Camera"
-      />
-      <Button
-        onClick={() => {
-          console.log(capture());
-        }}
-      >
-        Take Shot
-      </Button>
-    </Stack>
+      </div>
+      <label>
+        Use Camera
+        <input
+          type="checkbox"
+          checked={checked}
+          onChange={(event) => setChecked(event.target.checked)}
+        />
+      </label>
+      <div>
+        <p>Detected Emotion: {emotion}</p>
+      </div>
+    </div>
   );
 }
+
