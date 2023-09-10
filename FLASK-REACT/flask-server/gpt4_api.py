@@ -1,7 +1,6 @@
 import requests
 import config
 import openai
-# TODO: add to reqs.txt
 
 def call_gpt4_to_extract_info(transcript):
     ENDPOINT = "https://api.openai.com/v1/chat/completions"
