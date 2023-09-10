@@ -30,7 +30,7 @@ function SlideshowPage() {
   const converter = new showdown.Converter();
   const [slides, setSlides] = useState<{title: string, content?: string}[]>([]);
   // TODO
-  const student_info = ""
+  const student_info = "computer science student in college with interests in music and art"
   const query = localStorage.getItem("query")
   useEffect(()=>{
     if (slides.length > 0) return;
