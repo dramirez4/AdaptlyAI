@@ -98,9 +98,10 @@ def speech_to_text(audio_path):
 @app.route('/speech_to_text', methods=['POST'])
 def process_audio():
     # This is where you'll receive the audio file from the frontend.
-    # For now, let's just use a test file path.
-    transcript = speech_to_text("path/to/audio/file")
-    return jsonify({'transcript': transcript})
+    # # For now, let's just use a test file path.
+    # transcript = speech_to_text("path/to/audio/file")
+    # return jsonify({'transcript': transcript})
+    pass
 
 if __name__ == "__main__":
     app.run(debug=True)
