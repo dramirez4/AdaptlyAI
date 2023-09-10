@@ -11,6 +11,7 @@ import config  # This imports the config set up for Google Cloud and MongoDB.
 from gpt4_api import call_gpt4_to_extract_info
 import cv2
 import numpy as np
+import gpt4_api
 
 app = Flask(__name__)
 CORS(app)  # Enable CORS for your app
@@ -142,6 +143,25 @@ def process_audio():
         'extracted_info': extracted_info,
         'user_id': str(user_id.inserted_id)
     })
+
+
+@app.route('/new-deck', methods=['POST'])
+def new_deck():
+    data = request.get_json()
+    return jsonify(gpt4_api.make_new_deck(data['student_info'], data['query']))
+
+
+@app.route('/gen-slide', methods=['GET'])
+def new_slide():
+    data = request.get_json()
+    return jsonify(gpt4_api.make_new_slide(data['student_info'], data['query'], data['slide_title'], data['slide_titles']))
+
+
+@app.route('/confused-deck', methods=['POST'])
+def update_deck():
+    data = request.get_json()
+    return jsonify(gpt4_api.make_confused_deck(data['student_info'], data['query'], data['deck'], data['confused_slide_index']))
+
 
 if __name__ == "__main__":
     app.run(debug=True)
