@@ -19,3 +19,22 @@ class User:
     def find_by_id(cls, user_id):
         """Find a user by their unique ID."""
         return cls.collection.find_one({"_id": user_id})
+
+class Slideshow:
+    collection = mongo.db.slideshows  # 'users' is the name of the collection in MongoDB
+
+    @classmethod
+    def create_user(cls, data):
+        """Create a new user in the database."""
+        user = {
+            "user_id": data.get("user_id"),
+            "slides": data.get("slides"),
+            "created_at": datetime.utcnow(),
+        }
+        return cls.collection.insert_one(user)
+
+    @classmethod
+    def find_by_id(cls, user_id):
+        """Find a user by their unique ID."""
+        return cls.collection.find_one({"_id": user_id})
+

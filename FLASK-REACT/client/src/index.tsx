@@ -18,14 +18,14 @@ declare module "@tanstack/react-router" {
 const rootElement = document.getElementById("root");
 if (rootElement && !rootElement.innerHTML) {
   const root = ReactDOM.createRoot(rootElement);
+  // <React.StrictMode>
   root.render(
-    <React.StrictMode>
-      <MantineProvider>
+    <MantineProvider>
         <RouterProvider router={router} />
         <TanStackRouterDevtools router={router} />
       </MantineProvider>
-    </React.StrictMode>,
   );
+  // </React.StrictMode>,
 } else {
   console.error("Expected element to be exist and be empty", { rootElement });
 }

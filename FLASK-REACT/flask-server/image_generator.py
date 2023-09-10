@@ -1,40 +1,55 @@
-from flask import Flask, request, jsonify
+from flask import Blueprint, request, jsonify
 import openai
 
-app = Flask(__name__)
+bp = Blueprint('img', __name__)
 
-# Set your OpenAI API key here
-api_key = "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"
+# Load OpenAI API key from environment variable
+# api_key = os.getenv("OPENAI_API_KEY", "YOUR_DEFAULT_API_KEY_HERE")
+# openai.api_key = api_key
 
-# Initialize the OpenAI API client
-openai.api_key = api_key
-
-@app.route('/generate_image', methods=['GET'])
+@bp.route('/generate_image', methods=['POST'])
 def generate_image():
-    # Define a text prompt describing the image you want
-    prompt = "Generate an image of a blue cat with wings sitting on a cloud."
+    data = request.get_json()
+
+    # Check if prompt is provided
+    if not data or 'prompt' not in data:
+        return jsonify({'error': 'No prompt provided'}), 400
+
+    prompt = data['prompt']
 
     try:
         # Make an API call to generate the image
         response = openai.Image.create(
             model="image-alpha-001",  # Choose an appropriate DALL·E model
             prompt=prompt,
-            n=1,  # Number of images to generate (you can adjust this)
-            size="256x256"  # Specify the image size (you can adjust this)
+            n=1,  # Number of images to generate
+            size="256x256"  # Image size
         )
 
-        # Check for errors in the response
+        # Check for a valid response from OpenAI
         if 'data' in response and response['data']:
-            # Get the URL of the generated image
             image_url = response['data'][0]["url"]
             return jsonify({'imageURL': image_url})
         else:
-            return jsonify({'error': 'Failed to generate image'})
+            return jsonify({'error': 'Failed to generate image'}), 500
 
     except Exception as e:
-        return jsonify({'error': str(e)})
+        return jsonify({'error': str(e)}), 500
 
 if __name__ == '__main__':
     app.run(debug=True)
 
+"""
+How to use:
 
+When you call the endpoint /generate_image through a POST request, include a JSON object with a prompt key, e.g.,
+
+json
+Copy code
+{
+  "prompt": "Generate an image of a blue cat with wings sitting on a cloud."
+}
+The response will include the URL to the generated image or an error message.
+
+Remember to set the environment variable OPENAI_API_KEY with your OpenAI API key before running the Flask application. Using environment variables for storing secrets is a more secure practice than hardcoding them.
+"""

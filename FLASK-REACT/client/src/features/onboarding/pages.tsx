@@ -1,7 +1,7 @@
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import axios from "axios";
 import Webcam from "react-webcam";
-import './home.css';
+import "./home.css";
 
 export function Page1() {
   const [checked, setChecked] = useState(true);
@@ -16,7 +16,7 @@ export function Page1() {
     return null;
   }, [webcamRef]);
 
-  const detectEmotion = async () => {
+  const detectEmotion = useCallback(async () => {
     try {
       const screenshot = capture();
       if (screenshot) {
@@ -26,7 +26,7 @@ export function Page1() {
 
         const response = await axios.post(
           "http://127.0.0.1:5000/detect_emotion",
-          formData
+          formData,
         );
 
         const detectedEmotion = response.data.emotion;
@@ -39,7 +39,7 @@ export function Page1() {
       console.error("Error:", error.message);
       setEmotion("Error: Emotion detection failed");
     }
-  };
+  },[capture]);
 
   useEffect(() => {
     let intervalId: NodeJS.Timeout;
@@ -80,7 +80,3 @@ export function Page1() {
     </div>
   );
 }
-
-
-
-

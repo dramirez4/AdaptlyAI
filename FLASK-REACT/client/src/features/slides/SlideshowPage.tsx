@@ -9,10 +9,11 @@ import {
   AspectRatio,
   Flex,
   Button,
+  Loader,
+  Stack,
 } from "@mantine/core";
 import Webcam from "react-webcam";
 import { useCallback, useEffect, useRef, useState } from "react";
-import showdown from "showdown";
 import { Link } from "@tanstack/react-router";
 
 function SlideshowPage() {
@@ -25,14 +26,14 @@ function SlideshowPage() {
     },
     [embla],
   );
-    
+
   const [currentSlide, setCurrentSlide] = useState(0);
-  const converter = new showdown.Converter();
-  const [slides, setSlides] = useState<{title: string, content?: string}[]>([]);
-  // TODO
-  const student_info = "computer science student in college with interests in music and art"
-  const query = localStorage.getItem("query")
-  useEffect(()=>{
+  const [slides, setSlides] = useState<{ title: string; content?: string, audio_url?: string, img_prompt?: string }[]>(
+    [],
+  );
+  const student_info = localStorage.getItem("student_info");
+  const query = localStorage.getItem("query");
+  useEffect(() => {
     if (slides.length > 0) return;
     fetch(import.meta.env.VITE_PUBLIC_API_URL + "/new-deck", {
       method: "POST",
@@ -41,44 +42,69 @@ function SlideshowPage() {
       },
       body: JSON.stringify({
         query,
-        student_info
+        student_info,
       }),
     })
       .then((res) => res.json())
       .then((data) => {
-        console.log({data})
-        setSlides(data.map((slide) => ({title: slide})));
+        console.log({ data });
+        setSlides(data.map((slide) => ({ title: slide })));
+        genSlide(currentSlide)
       });
-  }, [query])
+  }, [query]);
 
+  const genSlide = useCallback((s)=>{
+    fetch(import.meta.env.VITE_PUBLIC_API_URL + "/gen-slide", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        query: localStorage.getItem("query"),
+        slide_title: slides[s]?.title,
+        slide_titles: slides.map((slide) => slide?.title),
+        student_info,
+      }),
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        console.log({ data });
+        setSlides((slides) => {
+          slides[s].content = data[0];
+          slides[s].audio_url = data[1];
+          slides[s].img_prompt = data[2];
+          return [...slides];
+        });
+      });
+  }, [slides])
+  // useEffect(() => {
+  //   if (slides.length > 0 && !slides[currentSlide]?.content) {
+  //     genSlide(currentSlide)
+  //   }
+  // }, [slides, currentSlide]);
   useEffect(() => {
     if (slides.length > 0 && !slides[currentSlide]?.content) {
-      fetch(import.meta.env.VITE_PUBLIC_API_URL + "/gen-slide", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          query: localStorage.getItem("query"),
-          slide_title: slides[currentSlide]?.title,
-          slide_titles: slides.map((slide) => slide?.title),
-          student_info
-        }),
-      })
-        .then((res) => res.json())
-        .then((data) => {
-          console.log({data})
-          setSlides((slides) => {
-            slides[currentSlide].content = data;
-            return [...slides];
-          });
-        });
+      slides.map(genSlide)
     }
-  }, [currentSlide])
+  }, [slides]);
 
-  const confused = useCallback(async (slideIdx: number)=> {
-    await fetch(import.meta.env.VITE_PUBLIC_API_URL + "/confused-deck", {body: JSON.stringify({confused_slide_index: slideIdx, query, student_info, deck: slides.map((slide)=>{return slide.title})})})
-  }, [query, slides])
+  const confused = useCallback(
+    async (slideIdx: number) => {
+      await fetch(import.meta.env.VITE_PUBLIC_API_URL + "/confused-deck", {
+        body: JSON.stringify({
+          confused_slide_index: slideIdx,
+          query,
+          student_info,
+          deck: slides.map((slide) => {
+            return slide.title;
+          }),
+        }),
+      });
+    },
+    [query, slides],
+
+    );
+    const audioEls = useRef<Record<number, HTMLAudioElement | null>>({})
   return (
     <AppShell
       padding="md"
@@ -86,10 +112,11 @@ function SlideshowPage() {
       navbar={
         <Navbar width={{ base: 300 }} p="xs">
           <Title>Slides</Title>
+          {slides.length == 0 && <Loader sx={{margin:"4rem"}} />}
           <List>
             {slides.map((slide, index) => (
               <List.Item
-                sx={index === currentSlide ? { backgroundColor: "red" } : {}}
+                sx={index === currentSlide ? { fontWeight: "bold" } : {}}
                 key={index}
                 onClick={() => switchSlide(index)}
               >
@@ -101,7 +128,7 @@ function SlideshowPage() {
       }
       header={
         <Header height={60} p="xs">
-          <Title order={1}>AdaptlyAI</Title>
+          <Title order={1}><Link to="/app/onboarding">AdaptlyAI</Link></Title>
         </Header>
       }
       styles={(theme) => ({
@@ -113,14 +140,17 @@ function SlideshowPage() {
         },
       })}
     >
-      <Link to="/app/query">Back to Query Page</Link>
-      <Title order={1}>"{query}"</Title>
-
-      <AspectRatio ratio={16 / 9} px="4rem">
+      <Stack>
+      <Link to="/app/query"><Text>Back to Query Page</Text></Link>
+      <Title order={1}>{query}</Title>
         <Carousel
+        px="4rem"
           getEmblaApi={setEmbla}
           withIndicators
-          onSlideChange={(idx) => setCurrentSlide(idx)}
+          onSlideChange={(idx) => {
+            setCurrentSlide(idx)
+            if (audioEls.current[idx]) audioEls.current[idx]?.play()
+          }}
         >
           {slides.map((text, index) => (
             <Carousel.Slide
@@ -130,32 +160,47 @@ function SlideshowPage() {
                 display: "flex",
                 flexDirection: "column",
                 alignItems: "start",
+                height: '60vh', 
+                overflow: 'scroll'
               })}
               key={index}
             >
-              <div
-                style={{ display: "contents" }}
-                dangerouslySetInnerHTML={{
-                  __html: converter.makeHtml(
-                    `# ${text?.title}\n\n${text?.content ? text.content : 'Loading...'}`,
-                  ),
-                }}
-              ></div>
+              {slides[index]?.audio_url && (
+                <audio ref={(r) => audioEls.current[index] = r} onEnded={() => switchSlide(index + 1)}
+                  controls
+                  autoPlay={index === 0}
+                  src={slides[index]?.audio_url}
+                ></audio>
+              )}
+              {!!slides[index].img_prompt && (
+                <DalleImage prompt={slides[index].img_prompt!} />
+              )}
+              {slides.length == 0 || !text.content && <Loader sx={{margin:"4rem"}} />}
+              <Title>{text?.title}</Title>
+              <Text>{text.content}</Text>
             </Carousel.Slide>
           ))}
         </Carousel>
-      </AspectRatio>
+</Stack>
 
-      {slides.length > 0 && <Text sx={{ textAlign: "center" }}>
-        {currentSlide + 1} / {slides.length}
-      </Text>}
+      {slides.length > 0 && (
+        <Text sx={{ textAlign: "center" }}>
+          {currentSlide + 1} / {slides.length}
+        </Text>
+      )}
 
       <Flex
         align={"center"}
         sx={{ width: "100%", justifyContent: "end" }}
         gap={"sm"}
       >
-        <Button onClick={()=>{confused(currentSlide)}}>I'm Confused</Button>
+        <Button
+          onClick={() => {
+            confused(currentSlide);
+          }}
+        >
+          I'm Confused
+        </Button>
         <AspectRatio
           ratio={1 / 1}
           sx={{
@@ -172,3 +217,30 @@ function SlideshowPage() {
   );
 }
 export default SlideshowPage;
+
+const DalleImage = ({ prompt }: { prompt: string }) => {
+  const [img, setImg] = useState<string | null>(null);
+  useEffect(() => {
+    if (img) return
+    fetch(import.meta.env.VITE_PUBLIC_API_URL + "/generate_image", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        prompt,
+      }),
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        console.log({ data });
+        setImg(data['imageURL']);
+      });
+  }, [prompt]);
+  return (
+    <img
+      src={img ? img : ""}
+      style={{ width: "100%", height: "100%" }}
+    />
+  );
+}

@@ -25,7 +25,7 @@ export function Page1() {
 
         const response = await axios.post(
           import.meta.env.VITE_PUBLIC_API_URL + "/detect_emotion",
-          formData
+          formData,
         );
 
         const detectedEmotion = response.data.emotion;
@@ -38,7 +38,7 @@ export function Page1() {
   }, [capture]);
 
   useEffect(() => {
-    let intervalId: NodeJS.Timeout;
+    let intervalId: number;
 
     if (checked) {
       // Start capturing and detecting emotion every 0.5 seconds
@@ -54,11 +54,70 @@ export function Page1() {
     };
   }, [checked, detectEmotion]);
 
+  const rec = useRef<MediaRecorder | null>(null)
+  const chunks = useRef<Blob[]>([])
+  useEffect(()=>{
+    if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+      console.log("getUserMedia supported.");
+      navigator.mediaDevices
+        .getUserMedia(
+          // constraints - only audio needed for this app
+          {
+            audio: true,
+          },
+        )
+    
+        // Success callback
+        .then((stream) => {
+          const mediaRecorder = new MediaRecorder(stream);
+          console.log({mediaRecorder})
+          rec.current = mediaRecorder
+          mediaRecorder.ondataavailable = (e) => {
+            chunks.current.push(e.data);
+          };
+  
+          mediaRecorder.onstop = async (e) => {
+            console.log("recorder stopped");
+            const blob = new Blob(chunks.current);
+            const formData = new FormData();
+            console.log("mime type",rec.current?.mimeType)
+            const format = rec.current?.mimeType.split('/')[1].split(';')[0];  // might give 'webm' or 'ogg' or other format based on the browser and MIME type.
+            formData.append("file", blob, `audio.${format}`)
+            // formData.append("file", blob, "audio.mp3");
+  
+            const response = await axios.post(
+              import.meta.env.VITE_PUBLIC_API_URL + "/speech_to_text",
+              formData,
+            );
+            const info = response.data.extracted_info;
+            localStorage.setItem("student_info", JSON.stringify(info));
+            alert(Object.values(info))
+            window.location.href = "/app/query";
+            chunks.current = [];
+          };
+        })
+    
+        // Error callback
+        .catch((err) => {
+          console.error(`The following getUserMedia error occurred: ${err}`);
+        });
+    } else {
+      console.log("getUserMedia not supported on your browser!");
+    }
+  }, [])
+
   return (
     <Stack align="center" className="background">
       <Title order={1}>Welcome to AdaptlyAI</Title>
-      <Text className="title">Home</Text>
-      
+      <Text className="title">Press record and introduce yourself before beginning with the session.</Text>
+      <button
+        onClick={() => {
+          rec.current?.state === 'recording' ? rec.current.stop() : rec.current?.start();
+        }}
+      >
+        {rec.current?.state === 'recording' ? "Stop" : "Record"}
+        {rec.current?.state}
+      </button>
       <AspectRatio
         ratio={16 / 9}
         sx={{ backgroundColor: "grey", width: "100%" }}

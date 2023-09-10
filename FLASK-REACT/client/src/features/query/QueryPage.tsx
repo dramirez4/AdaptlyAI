@@ -23,10 +23,15 @@ const QueryPage = () => {
         />
 
         <Group position="right" mt="md">
-          <Button type="submit" onClick={()=>{
-            localStorage.setItem("query", form.values.query)
-            window.location.href = "/app/slides"
-          }}>Submit</Button>
+          <Button
+            type="submit"
+            onClick={() => {
+              localStorage.setItem("query", form.values.query);
+              window.location.href = "/app/slides";
+            }}
+          >
+            Submit
+          </Button>
         </Group>
       </form>
     </div>
