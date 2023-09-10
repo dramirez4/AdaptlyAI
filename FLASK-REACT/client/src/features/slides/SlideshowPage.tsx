@@ -49,7 +49,7 @@ function SlideshowPage() {
         console.log({data})
         setSlides(data.map((slide) => ({title: slide})));
       });
-  }, [])
+  }, [query])
 
   useEffect(() => {
     if (slides.length > 0 && !slides[currentSlide]?.content) {
