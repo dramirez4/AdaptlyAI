@@ -11,6 +11,13 @@ from gpt4_api import call_gpt4_to_extract_info
 app = Flask(__name__)
 CORS(app)  # Enable CORS for your app
 
+# Load your pre-trained emotion classification model
+# Update with the correct path
+model_path = '/Users/davidramirez/Desktop/AdaptlyAI/AdaptlyAI/model.h5'
+classifier = load_model(model_path)
+emotion_labels = ['Angry', 'Disgust', 'Fear',
+                  'Happy', 'Neutral', 'Sad', 'Surprise']
+
 app.register_blueprint(views_bp)
 
 # MongoDB Configuration
