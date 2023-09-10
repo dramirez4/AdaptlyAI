@@ -13,7 +13,7 @@ import config  # This imports the config we set up for Google Cloud and MongoDB.
 app = Flask(__name__)
 
 # Load your pre-trained emotion classification model
-model_path = '/Users/davidramirez/Desktop/AdaptlyAI/AdaptlyAI/FLASK-REACT/flask-server/Emotion_Detection/model.h5'  # Update with the correct path
+model_path = '/Users/davidramirez/Desktop/AdaptlyAI/AdaptlyAI/model.h5'  # Update with the correct path
 classifier = load_model(model_path)
 emotion_labels = ['Angry', 'Disgust', 'Fear', 'Happy', 'Neutral', 'Sad', 'Surprise']
 
@@ -93,14 +93,14 @@ def speech_to_text(audio_path):
 
     for result in response.results:
         transcript = result.alternatives[0].transcript
-        return transcript
+        return transcript 
 
 @app.route('/speech_to_text', methods=['POST'])
 def process_audio():
     # This is where you'll receive the audio file from the frontend.
     # # For now, let's just use a test file path.
-    # transcript = speech_to_text("path/to/audio/file")
-    # return jsonify({'transcript': transcript})
+    transcript = speech_to_text("path/to/audio/file")
+    return jsonify({'transcript': transcript})
     pass
 
 if __name__ == "__main__":

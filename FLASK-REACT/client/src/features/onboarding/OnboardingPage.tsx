@@ -3,6 +3,7 @@ import Webcam from "react-webcam";
 import { useCallback, useRef, useState, useEffect } from "react";
 import axios from "axios";
 
+
 export function Page1() {
   const [checked, setChecked] = useState(true);
   const webcamRef = useRef<Webcam | null>(null);
@@ -12,6 +13,7 @@ export function Page1() {
       return webcamRef.current.getScreenshot();
     }
   }, [webcamRef]);
+
   const detectEmotion = useCallback(async () => {
     try {
       const screenshot = capture();
@@ -52,12 +54,13 @@ export function Page1() {
   }, [checked, detectEmotion]);
 
   return (
-    <Stack align="center">
+    <Stack align="center" className="background">
       <Title order={1}>Welcome to AdaptlyAI</Title>
-      <Text>Let's get started.</Text>
+      <Text className="title">Home</Text>
+      <p>Adaptly</p>
       <AspectRatio
         ratio={16 / 9}
-        sx={{ backgroundColor: "gray", width: "100%" }}
+        sx={{ backgroundColor: "grey", width: "100%" }}
       >
         {checked && <Webcam ref={webcamRef} />}
       </AspectRatio>
@@ -66,16 +69,7 @@ export function Page1() {
         onChange={(event) => setChecked(event.currentTarget.checked)}
         label="Use Camera"
       />
-      <Button
-        onClick={() => {
-          console.log(capture());
-        }}
-      >
-        Take Shot
-      </Button>
-      
       <Text>Detected Emotion: {emotion}</Text>
-      
     </Stack>
   );
 }
