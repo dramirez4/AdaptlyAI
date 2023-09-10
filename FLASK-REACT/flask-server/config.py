@@ -2,7 +2,7 @@ import os
 from dotenv import load_dotenv
 from google.cloud import speech
 from google.oauth2.service_account import Credentials
-
+from pymongo import MongoClient
 load_dotenv()
 print(os.getenv("GOOGLE_APPLICATION_CREDENTIALS"))
 

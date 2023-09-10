@@ -18,7 +18,7 @@ CORS(app)  # Enable CORS for your app
 
 # Load your pre-trained emotion classification model
 # Update with the correct path
-model_path = '/Users/davidramirez/Desktop/AdaptlyAI/AdaptlyAI/model.h5'
+model_path = '../../model.h5'
 classifier = load_model(model_path)
 emotion_labels = ['Angry', 'Disgust', 'Fear','Happy', 'Neutral', 'Sad', 'Surprise']
 
@@ -40,7 +40,7 @@ def detect_emotion():
         gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
 
         # Detect faces in the grayscale image
-        faces = cv2.CascadeClassifier('/Users/davidramirez/Desktop/AdaptlyAI/AdaptlyAI/FLASK-REACT/flask-server/Emotion_Detection/haarcascade_frontalface_default.xml').detectMultiScale(
+        faces = cv2.CascadeClassifier('./Emotion_Detection/haarcascade_frontalface_default.xml').detectMultiScale(
             gray,
             scaleFactor=1.1,
             minNeighbors=5,
