@@ -7,22 +7,19 @@ from keras.preprocessing.image import img_to_array
 from google.cloud import speech_v1 as speech
 from flask_pymongo import PyMongo
 from pydub import AudioSegment
-import config  # This imports the config we set up for Google Cloud and MongoDB.
+import config  # This imports the config set up for Google Cloud and MongoDB.
 from gpt4_api import call_gpt4_to_extract_info
 import cv2
 import numpy as np
 
 app = Flask(__name__)
+CORS(app)  # Enable CORS for your app
 
 # Load your pre-trained emotion classification model
 # Update with the correct path
 model_path = '/Users/davidramirez/Desktop/AdaptlyAI/AdaptlyAI/model.h5'
 classifier = load_model(model_path)
 emotion_labels = ['Angry', 'Disgust', 'Fear','Happy', 'Neutral', 'Sad', 'Surprise']
-
-# Enable CORS for your app
-
-CORS(app)
 
 app.register_blueprint(views_bp)
 
@@ -83,24 +80,14 @@ def detect_emotion():
 app.config["MONGO_URI"] = config.MONGO_URI
 mongo = PyMongo(app)
 
-
 def process_audio_file(file_path):
-    """Process audio file to ensure it's in mono and 16kHz sample rate."""
     audio = AudioSegment.from_wav(file_path)
-
-    # Convert stereo to mono
     if audio.channels > 1:
         audio = audio.set_channels(1)
-
-    # Set sample rate to 16kHz
     audio = audio.set_frame_rate(16000)
-
-    # Save processed audio
     processed_path = "processed_" + file_path.split("/")[-1]
     audio.export(processed_path, format="wav")
-
     return processed_path
-
 
 def speech_to_text(audio_path):
     client = speech.SpeechClient()
@@ -114,12 +101,13 @@ def speech_to_text(audio_path):
         language_code="en-US",
     )
 
-    response = client.recognize(config=config, audio=audio)
+    response = client.long_running_recognize(config=config, audio=audio).result()
 
+    transcripts = []
     for result in response.results:
-        transcript = result.alternatives[0].transcript
-        return transcript
+        transcripts.append(result.alternatives[0].transcript)
 
+    return ' '.join(transcripts)
 
 @app.route('/speech_to_text', methods=['POST'])
 def process_audio():
@@ -132,30 +120,28 @@ def process_audio():
         print("No filename specified")
         return jsonify({'error': 'No selected file'}), 400
 
-    # Saving file temporarily for processing
     audio_path = os.path.join("temporary_storage", file.filename)
     file.save(audio_path)
-
-    # Process the audio to ensure it fits Google STT requirements
     processed_audio_path = process_audio_file(audio_path)
 
-    transcript = speech_to_text(processed_audio_path)
-    
-    # Extract info from the transcript using GPT-4
+    try:
+        transcript = speech_to_text(processed_audio_path)
+    except Exception as e:
+        return jsonify({'error': f'Error in transcription: {str(e)}'}), 400
+
     extracted_info = call_gpt4_to_extract_info(transcript)
-    
-    # Save to MongoDB
+
     from models import User
     user_id = User.create_user(extracted_info)
     
-    os.remove(audio_path)  # Remove the original temporary file after processing
-    os.remove(processed_audio_path)  # Remove the processed temporary file after processing
+    os.remove(audio_path)
+    os.remove(processed_audio_path)
     
     return jsonify({
         'transcript': transcript,
         'extracted_info': extracted_info,
         'user_id': str(user_id.inserted_id)
     })
-    
+
 if __name__ == "__main__":
     app.run(debug=True)
