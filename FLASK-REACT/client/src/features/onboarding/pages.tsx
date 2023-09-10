@@ -1,11 +1,12 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import axios from "axios";
 import Webcam from "react-webcam";
-
+import './home.css';
 
 export function Page1() {
   const [checked, setChecked] = useState(true);
   const [emotion, setEmotion] = useState("");
+  const [imageURL, setImageURL] = useState(""); // State to store the image URL
   const webcamRef = useRef<Webcam | null>(null);
 
   const capture = useCallback(() => {
@@ -30,6 +31,9 @@ export function Page1() {
 
         const detectedEmotion = response.data.emotion;
         setEmotion(detectedEmotion);
+
+        // Set the image URL received from the server
+        setImageURL(response.data.imageURL);
       }
     } catch (error) {
       console.error("Error:", error.message);
@@ -71,6 +75,7 @@ export function Page1() {
       </label>
       <div>
         <p>Detected Emotion: {emotion}</p>
+        {imageURL && <img src={imageURL} alt="Generated Image" />}
       </div>
     </div>
   );

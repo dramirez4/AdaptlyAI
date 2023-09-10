@@ -1,0 +1,48 @@
+body,html{
+    margin: 0;
+    padding: 0;
+}
+
+
+.page-container{
+    background-color: blue;
+}
+
+
+/* page1.css */
+
+.page-container {
+    text-align: center;
+    padding: 20px;
+  }
+  
+  
+.camera-container {
+    border: 1px solid #ccc;
+    margin: 20px auto;
+    max-width: 500px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #f0f0f0;
+}
+  
+.camera-container.active {
+    border-color: #007bff;
+}
+  
+.webcam {
+    max-width: 100%;
+}
+  
+label {
+    display: block;
+    margin-top: 10px;
+}
+  
+p {
+    font-size: 18px;
+    margin-top: 10px;
+    color: #333;
+}
+  

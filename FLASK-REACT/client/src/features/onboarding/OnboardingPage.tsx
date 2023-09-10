@@ -1,7 +1,8 @@
-import { Text, AspectRatio, Switch, Title, Stack, Button } from "@mantine/core";
+import { Text, AspectRatio, Switch, Title, Stack } from "@mantine/core";
 import Webcam from "react-webcam";
 import { useCallback, useRef, useState, useEffect } from "react";
 import axios from "axios";
+
 
 
 export function Page1() {
@@ -57,7 +58,7 @@ export function Page1() {
     <Stack align="center" className="background">
       <Title order={1}>Welcome to AdaptlyAI</Title>
       <Text className="title">Home</Text>
-      <p>Adaptly</p>
+      
       <AspectRatio
         ratio={16 / 9}
         sx={{ backgroundColor: "grey", width: "100%" }}
