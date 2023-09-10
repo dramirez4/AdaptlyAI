@@ -25,7 +25,7 @@ function SlideshowPage() {
     },
     [embla],
   );
-
+    
   const [currentSlide, setCurrentSlide] = useState(0);
   const converter = new showdown.Converter();
   const [slides, setSlides] = useState<{title: string, content?: string}[]>([]);
@@ -33,6 +33,7 @@ function SlideshowPage() {
   const student_info = ""
   const query = localStorage.getItem("query")
   useEffect(()=>{
+    if (slides.length > 0) return;
     fetch(import.meta.env.VITE_PUBLIC_API_URL + "/new-deck", {
       method: "POST",
       headers: {
@@ -51,7 +52,7 @@ function SlideshowPage() {
   }, [])
 
   useEffect(() => {
-    if (!slides[currentSlide]?.content) {
+    if (slides.length > 0 && !slides[currentSlide]?.content) {
       fetch(import.meta.env.VITE_PUBLIC_API_URL + "/gen-slide", {
         method: "POST",
         headers: {
@@ -74,6 +75,10 @@ function SlideshowPage() {
         });
     }
   }, [currentSlide])
+
+  const confused = useCallback(async (slideIdx: number)=> {
+    await fetch(import.meta.env.VITE_PUBLIC_API_URL + "/confused-deck", {body: JSON.stringify({confused_slide_index: slideIdx, query, student_info, deck: slides.map((slide)=>{return slide.title})})})
+  }, [query, slides])
   return (
     <AppShell
       padding="md"
@@ -141,16 +146,16 @@ function SlideshowPage() {
         </Carousel>
       </AspectRatio>
 
-      <Text sx={{ textAlign: "center" }}>
+      {slides.length > 0 && <Text sx={{ textAlign: "center" }}>
         {currentSlide + 1} / {slides.length}
-      </Text>
+      </Text>}
 
       <Flex
         align={"center"}
         sx={{ width: "100%", justifyContent: "end" }}
         gap={"sm"}
       >
-        <Button>I'm Confused</Button>
+        <Button onClick={()=>{confused(currentSlide)}}>I'm Confused</Button>
         <AspectRatio
           ratio={1 / 1}
           sx={{
