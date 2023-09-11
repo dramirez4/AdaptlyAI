@@ -1,5 +1,9 @@
 # AdaptlyAI
 
+##Contributors 
+Made by Elijah Umana, Jason Antwi-Appah, and 
+David Ramirez
+
 ## Backend
 Create Virtual Environment: `python3 -m venv venv`
 Activate Virtual Environment: `source venv/bin/activate`
