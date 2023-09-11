@@ -1,7 +1,6 @@
 # AdaptlyAI
 
-##Contributors 
-Made by Elijah Umana, Jason Antwi-Appah, and 
+##Contributors Elijah Umana, Jason Antwi-Appah, and 
 David Ramirez
 
 ## Backend
