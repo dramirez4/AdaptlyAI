@@ -5,7 +5,7 @@ import openai
 import re
 import elevenlabs
 from elevenlabs import set_api_key
-set_api_key(os.environ["ELEVEN_KEY"])
+set_api_key(config.ELEVEN_KEY)
 
 def call_gpt4_to_extract_info(transcript):
     ENDPOINT = "https://api.openai.com/v1/chat/completions"
@@ -33,7 +33,7 @@ def call_gpt4_to_extract_info(transcript):
     # Extract hobbies or experiences for analogies
     messages_experience = [
         {"role": "system", "content": "You are a helpful assistant."},
-        {"role": "user", "content": f"The person mentioned: '{transcript}'. Extract a hobby or personal experience they might have talked about and write one sentence of that so that we can use that for creating anlogies in the future."}
+        {"role": "user", "content": f"The person mentioned: '{transcript}'. Extract a hobby or personal experience they might have talked about and write one sentence of that so that we can use that for creating analogies in the future."}
     ]
     experience_summary = make_api_call(messages_experience)
 
