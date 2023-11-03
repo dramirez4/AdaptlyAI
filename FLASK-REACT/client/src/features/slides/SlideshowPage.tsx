@@ -54,6 +54,9 @@ function SlideshowPage() {
   }, [query]);
 
   const genSlide = useCallback((s)=>{
+    const slideTitle = slides[s]?.title;
+    if (!slideTitle) return; // Guard clause to ensure slide title is defined
+    
     fetch(import.meta.env.VITE_PUBLIC_API_URL + "/gen-slide", {
       method: "POST",
       headers: {
@@ -83,10 +86,11 @@ function SlideshowPage() {
   //   }
   // }, [slides, currentSlide]);
   useEffect(() => {
-    if (slides.length > 0 && !slides[currentSlide]?.content) {
-      slides.map(genSlide)
+    if (slides.length > 0 && slides[currentSlide] && !slides[currentSlide].content) {
+      genSlide(currentSlide);
     }
-  }, [slides]);
+  }, [slides, currentSlide, genSlide]);
+  
 
   const confused = useCallback(
     async (slideIdx: number) => {

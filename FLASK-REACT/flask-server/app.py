@@ -3,6 +3,7 @@ from views import bp as views_bp
 from image_generator import bp as img_bp
 import os
 from flask_cors import CORS
+from flask_cors import cross_origin
 from flask import Flask, request, jsonify
 from keras.models import load_model
 from keras.preprocessing.image import img_to_array
@@ -15,7 +16,7 @@ import numpy as np
 import gpt4_api
 
 app = Flask(__name__)
-CORS(app)  # Enable CORS for your app
+CORS(app, origins=["http://localhost:5173"])
 
 # Load your pre-trained emotion classification model
 # Update with the correct path
@@ -178,8 +179,10 @@ def new_deck():
 
 
 @app.route('/gen-slide', methods=['POST'])
+@cross_origin()
 def new_slide():
     data = request.get_json()
+    print(f"this is the data received at gen slide: {data}")
     return jsonify(list(gpt4_api.make_new_slide(data['student_info'], data['query'], data['slide_title'], data['slide_titles'])))
 
 
