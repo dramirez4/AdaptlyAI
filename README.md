@@ -4,6 +4,9 @@
 
 In an age where online learning is ubiquitous, the limitations of "one-size-fits-all" educational content have become strikingly clear. Our team at Adaptly AI is driven by the conviction that the effectiveness of learning is significantly heightened when it is customized to an individual's unique experiences, preferred styles of explanation, and language. Drawing inspiration from the natural human tendency to use relatable analogies for explaining complex topics, we set out to create an AI that could make every learning experience as intuitive as discussing a hobby.
 
+<img width="1123" alt="Screenshot 2023-12-03 at 1 32 56 AM" src="https://github.com/dramirez4/AdaptlyAI/assets/121345656/853c97a9-5014-4259-b124-1944aaec0a4b">
+
+
 ## About Adaptly AI
 
 Adaptly AI is an innovative application designed to deliver a bespoke educational experience. It attentively listens to users express their personal experiences, hobbies, language of preference for learning, and desired styles of explanation. The application leverages this information to personalize subsequent educational material, drawing on analogies and references from the user's own experiences to ensure that each learning journey is distinctive, customized, and above all, effective.
